@@ -1,21 +1,23 @@
 var Group = function(name) {
   this.id = name;
   this.creatures = [];
-  this.dead_creatures = 0;
-  this.lead = null;
-  this.bases = [];
+  this.deadCreatures = 0;
 };
 
-Group.prototype.canBeAttacked = function() {
-  return this.creatures.length > this.dead_creatures;
+Group.prototype.isDead = function() {
+  return this.deadCreatures >= this.creatures.length;
 };
 
 Group.prototype.attackedBy = function(group, creaturesGetKilled) {
-  if (creaturesGetKilled && this.canBeAttacked()) {
-    this.dead_creatures += creaturesGetKilled;
-    console.log(this.id, ' was attacked by ', group.id, creaturesGetKilled, this.dead_creatures);
+  if (this.isDead()) {
+    console.warn(this.id, ' can not be attacked');
+    return;
+  }
+
+  if (creaturesGetKilled !== 0) {
+    this.remove(creaturesGetKilled);
   } else {
-    console.log(this.id, ' has no more creatures ', this.dead_creatures, ' or simply did not lose any');
+    console.log(this.id, 'did not lose any', creaturesGetKilled);
   }
 };
 
@@ -25,8 +27,10 @@ Group.prototype.add = function(creature) {
   return this;
 };
 
-Group.prototype.remove = function(creature) {
-  this.dead_creatures++;
+Group.prototype.remove = function(number) {
+  var numberOfLosses = this.deadCreatures + number;
+  this.deadCreatures = Math.min(this.creatures.length, numberOfLosses);
+  console.log(this.id, "Dead: " + this.deadCreatures);
   return this;
 };
 

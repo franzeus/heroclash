@@ -1,10 +1,10 @@
 var Game = {
 
   groups : [],
-  deadGroupsIndexes: [],
+  deadGroups: [],
   currentGroupIndex: 0,
   rounds: 0,
-  NEXT_ROUND_DELAY: 2000,
+  NEXT_ROUND_DELAY: 100,
 
   addGroup : function(group) {
     if (!group) {
@@ -14,6 +14,7 @@ var Game = {
   },
 
   start : function() {
+    this.deadGroups = [];
     var numberOfGroups = this.groups.length;
     if (numberOfGroups <= 1) {
       throw 'Well it seems there will be no war today!';
@@ -24,22 +25,27 @@ var Game = {
     this.playRound();
   },
 
+  gameOver : function(winnerGroup) {
+    console.log("WINNER", winnerGroup.id);
+  },
+
   playRound : function() {
     var self = this;
     var attackingGroup = this.groups[this.currentGroupIndex];
     var groupToAttack = this.getGroupToAttack(attackingGroup);
-
+    console.log('-----------------------');
+    console.log(attackingGroup.id, 'attacks', groupToAttack.id);
     groupToAttack.attackedBy(attackingGroup, this.attackWillKillNumOfCreatures());
 
-    // Lets check if the attacked group can stand another attack, if not add it to the dead groups
-    if (!groupToAttack.canBeAttacked()) {
-      var groupIndex = this.getGroupIndexById(groupToAttack);
-      this.deadGroupsIndexes.push(groupIndex);
+    // Lets check if the attacked group can stand another attack, if not add it to the 
+    // dead groups
+    if (groupToAttack.isDead()) {
+      this.addDeadGroup(groupToAttack);
     }
 
     // All groups (expect one) are dead
-    if (this.deadGroupsIndexes.length === this.groups.length - 1) {
-      console.log("WINNER", attackingGroup.id);
+    if (this.deadGroups.length === this.groups.length - 1) {
+      this.gameOver(attackingGroup);
     // Next round
     } else {
       setTimeout(function() {
@@ -56,14 +62,14 @@ var Game = {
     var groupToAttack = null;
     do {
       groupToAttack = getRandomArrayItem(this.groups);
-    } while (groupToAttack.id === attackingGroup.id &&
-             groupToAttack.canBeAttacked());
+    } while (!(groupToAttack.id !== attackingGroup.id && !this.isGroupDead(groupToAttack)));
     return groupToAttack;
   },
 
   attackWillKillNumOfCreatures : function() {
+    var creaturesToKill = getRandomInt(0, 1);
     //TODO: non deterministic code
-    return getRandomInt(0, 3);
+    return creaturesToKill;
   },
 
   increaseGroupIndex : function() {
@@ -72,6 +78,24 @@ var Game = {
       newIndex = 0;
     }
     this.currentGroupIndex = newIndex;
+
+    // Only chose a group that is not dead
+    if (this.isGroupDead(this.groups[this.currentGroupIndex])) {
+      this.increaseGroupIndex();
+    }
+  },
+
+  addDeadGroup : function(group) {
+    if (this.isGroupDead(group)) {
+      console.warn('This group is actually already dead', group.id);
+      return;
+    }
+    console.log('Add dead group', group.id);
+    this.deadGroups.push(group.id);
+  },
+
+  isGroupDead : function(group) {
+    return this.deadGroups.indexOf(group.id) > -1;
   },
 
   getGroupIndexById : function(id) {
