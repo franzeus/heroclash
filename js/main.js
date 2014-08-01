@@ -1,15 +1,15 @@
 (function() {
-
+  Game.init();
   // Add groups and its creatures
   var addGroups = function() {
     var groups = [
       {
         id: 'A',
-        creatures: 3
+        creatures: 5
       },
       {
         id: 'B',
-        creatures: 3
+        creatures: 5
       }
     ];
     for (var i = 0; i < groups.length; i++) {

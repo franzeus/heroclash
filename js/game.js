@@ -8,13 +8,20 @@ var Game = {
   // @var {Number} rounds
   rounds: 0,
   // @const {Number} NEXT_ROUND_DELAY
-  NEXT_ROUND_DELAY: 100,
+  NEXT_ROUND_DELAY: 1000,
+  //
+  container: null,
+
+  init : function() {
+    this.container = document.getElementById('gameContainer');
+  },
 
   addGroup : function(group) {
     if (!group) {
       throw 'YUNO give me group object?!';
     }
     this.groups.push(group);
+    this.container.appendChild(group.element);
     return this;
   },
 
@@ -27,12 +34,22 @@ var Game = {
     console.log('Let the games begin!');
     // Randomly select first attacker
     this.currentGroupIndex = getRandomInt(0, numberOfGroups - 1);
+    this.render();
     this.playRound();
   },
 
   gameOver : function(winnerGroup) {
-    console.log("WINNER", winnerGroup.id);
+    winnerGroup.setWinner();
+    console.log("WINNER", winnerGroup.id, "Killed: " + winnerGroup.killedCreatures);
     console.log("Rounds", this.rounds);
+  },
+
+  render : function() {
+    var groupWidth = (100 / this.groups.length) + '%';
+
+    for (var i = 0; i < this.groups.length; i++) {
+      this.groups[i].draw(groupWidth);
+    }
   },
 
   /**
@@ -45,13 +62,16 @@ var Game = {
     console.log('-----------------------');
     self.rounds++;
     console.log(attackingGroup.id, 'attacks', groupToAttack.id);
-    groupToAttack.attackedBy(attackingGroup, this.attackWillKillNumOfCreatures());
+    var numberOfKillingCreatures = this.attackWillKillNumOfCreatures();
+    groupToAttack.attackedBy(attackingGroup, numberOfKillingCreatures);
+    attackingGroup.killCreatures(numberOfKillingCreatures);
 
     // Lets check if the attacked group can stand another attack, if not add it to the 
     // dead groups
     if (groupToAttack.isDead()) {
       this.addDeadGroup(groupToAttack);
     }
+    this.render();
 
     // All groups (expect one) are dead
     if (this.deadGroups.length === this.groups.length - 1) {
@@ -138,6 +158,5 @@ var Game = {
     }
     return null;
   }
-
 
 };

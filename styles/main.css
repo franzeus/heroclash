@@ -1,0 +1,57 @@
+body {
+  background: #2980b9;
+}
+
+#gameContainer {
+  padding-top: 100px;
+  overflow: hidden;
+}
+
+.group {
+  float: left;
+  text-align: center;
+  overflow: hidden;
+  width: 50%;
+}
+
+.group_body {
+  margin: auto;
+  width: 200px;
+  height: 200px;
+  border-radius: 100%;
+  background: #3498db;
+  overflow: hidden;
+  padding: 1em;
+}
+
+.dead_group_body {
+  background: #703737;
+  border: 1px solid #e74c3c;
+}
+
+.winner_group_body {
+  background: #27ae60;
+}
+
+.group_front {
+  border-bottom: 100px solid #8D5C36;
+  border-left: 50px solid transparent;
+  border-right: 50px solid transparent;
+  height: 0;
+  width: 100px;
+}
+
+.creature {
+  display: inline-block;
+  margin: 1em;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #CCCCCC;
+  color: #F5B78F;
+  border-radius: 40px;
+  text-align: center;
+}
+
+.dead_creature {
+  border: 1px solid #e74c3c;
+}
