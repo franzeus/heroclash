@@ -5,11 +5,11 @@
     var groups = [
       {
         id: 'A',
-        creatures: 5
+        creatures: 3
       },
       {
         id: 'B',
-        creatures: 5
+        creatures: 3
       }
     ];
     for (var i = 0; i < groups.length; i++) {

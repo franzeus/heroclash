@@ -4,7 +4,18 @@
 </head>
 <body>
   <div id="gameContainer"></div>
-  <script type="text/javascript" src="js/lib/jquery-1.11.1.min"></script>
+  <div id="round_state" class="hide"></div>
+
+  <div id="group_template" class="group template">
+    <div class="group_body"></div>
+    <div class="group_message">
+      <h4 class="message_length"></h4>
+      <span class="message_text"></span>
+      <div class="message_triangle_down"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="js/libs/jquery-1.11.1.min.js"></script>
   <script type="text/javascript" src="js/utils.js"></script>
   <script type="text/javascript" src="js/creature.js"></script>
   <script type="text/javascript" src="js/group.js"></script>

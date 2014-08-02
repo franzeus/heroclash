@@ -2,25 +2,27 @@ body {
   background: #2980b9;
 }
 
+.template, .hide {
+  display: none;
+}
+
 #gameContainer {
   padding-top: 100px;
-  overflow: hidden;
 }
 
 .group {
+  position: relative;
   float: left;
   text-align: center;
-  overflow: hidden;
   width: 50%;
 }
 
 .group_body {
-  margin: auto;
+  margin: 100px auto;
   width: 200px;
   height: 200px;
   border-radius: 100%;
   background: #3498db;
-  overflow: hidden;
   padding: 1em;
 }
 
@@ -52,6 +54,46 @@ body {
   text-align: center;
 }
 
+#round_state {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  margin-left: -115px;
+  width: 230px;
+  font-size: 30px;
+  background: #2c3e50;
+  color: #FFFFFF;
+  text-align: center;
+}
+
 .dead_creature {
   border: 1px solid #e74c3c;
+}
+
+.message_length {
+  color: #008800;
+  margin: 0;
+}
+
+.group_message {
+  position: absolute;
+  left: 50%;
+  top: -45px;
+  margin-left: -200px;
+  width: 400px;
+  background: #FFFFFF;
+  color: #000000;
+  padding: 1em;
+  border-radius: 7px;
+}
+
+.message_triangle_down {
+  width: 0;
+  height: 0;
+  border-left: 30px solid transparent;
+  border-right: 30px solid transparent;
+  border-top: 70px solid #FFFFFF;
+  position: absolute;
+  left: 50%;
+  margin-left: -33px;
 }

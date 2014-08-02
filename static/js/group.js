@@ -3,20 +3,22 @@ var Group = function(name) {
   this.creatures = [];
   this.deadCreatures = 0;
   this.killedCreatures = 0;
-  this.element = document.createElement('div');
-  this.element.id = this.id;
-  this.element.className = 'group';
-  this.body = document.createElement('div');
-  this.body.className = 'group_body';
-  this.element.appendChild(this.body);
+
+  this.element = jQuery('#group_template').clone();
+  this.element.removeClass('template');
+  this.body = this.element.find('.group_body').first();
+  this.message = this.element.find('.group_message').first();
+  this.messageText = this.message.find('.message_text');
+  this.messageLen = this.message.find('.message_length');
+  this.totalMessageLen = 0;
 };
 
 Group.prototype.draw = function(groupWidth) {
-  this.element.style.width = groupWidth;
-  this.body.innerHTML = '<div>' + this.id + '</div>';
+  this.element.css({ width : groupWidth });
+  this.body.html('<div>' + this.id + '</div>');
   for (var i = 0; i < this.creatures.length; i++) {
     var creature = this.creatures[i];
-    this.body.appendChild(creature.element);
+    this.body.append(creature.element);
   }
 };
 
@@ -24,7 +26,7 @@ Group.prototype.isDead = function() {
   return this.deadCreatures >= this.creatures.length;
 };
 
-Group.prototype.attackedBy = function(group, creaturesGetKilled) {
+Group.prototype.attackedBy = function(creaturesGetKilled) {
   if (this.isDead()) {
     console.warn(this.id, ' can not be attacked - no creatures left!');
     return;
@@ -33,11 +35,19 @@ Group.prototype.attackedBy = function(group, creaturesGetKilled) {
   if (creaturesGetKilled !== 0) {
     this.remove(creaturesGetKilled);
     if (this.isDead()) {
-      this.body.className += ' dead_group_body';
+      this.body.addClass('dead_group_body');
     }
   } else {
     console.log(this.id, 'did not lose any', creaturesGetKilled);
   }
+};
+
+Group.prototype.says = function(message) {
+  console.log(this.id, message.text.length, message.text);
+  var msgLen = message.text.length;
+  this.totalMessageLen += msgLen;
+  this.messageLen.html(msgLen);
+  this.messageText.html(message.text);
 };
 
 Group.prototype.add = function(creature) {
@@ -51,12 +61,13 @@ Group.prototype.killCreatures = function(number) {
 };
 
 Group.prototype.setWinner = function(number) {
-  this.body.className += ' winner_group_body';
+  this.body.addClass('winner_group_body');
 };
 
 Group.prototype.remove = function(number) {
   var numberOfLosses = this.deadCreatures + number;
   this.deadCreatures = Math.min(this.creatures.length, numberOfLosses);
+  console.log(this.id, 'loses', number);
 
   if (number > 0) {
     var count = 0;

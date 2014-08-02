@@ -8,12 +8,15 @@ var Game = {
   // @var {Number} rounds
   rounds: 0,
   // @const {Number} NEXT_ROUND_DELAY
-  NEXT_ROUND_DELAY: 1000,
-  //
+  NEXT_ROUND_DELAY: 100,
+  // @var {Element}
   container: null,
+  // @var {Element}
+  roundState: null,
 
   init : function() {
-    this.container = document.getElementById('gameContainer');
+    this.container = jQuery('#gameContainer');
+    this.roundState = jQuery('#round_state');
   },
 
   addGroup : function(group) {
@@ -21,7 +24,7 @@ var Game = {
       throw 'YUNO give me group object?!';
     }
     this.groups.push(group);
-    this.container.appendChild(group.element);
+    this.container.append(group.element);
     return this;
   },
 
@@ -34,6 +37,7 @@ var Game = {
     console.log('Let the games begin!');
     // Randomly select first attacker
     this.currentGroupIndex = getRandomInt(0, numberOfGroups - 1);
+    this.roundState.removeClass('hide');
     this.render();
     this.playRound();
   },
@@ -42,6 +46,7 @@ var Game = {
     winnerGroup.setWinner();
     console.log("WINNER", winnerGroup.id, "Killed: " + winnerGroup.killedCreatures);
     console.log("Rounds", this.rounds);
+    this.roundState.html(winnerGroup.id + ' is the WINNER! (' + winnerGroup.totalMessageLen + ')');
   },
 
   render : function() {
@@ -53,18 +58,25 @@ var Game = {
   },
 
   /**
-   * Let current group attack another group until there is only one group left
+   * Lets current group attack another group until there is only one group left
    */
   playRound : function() {
-    var self = this;
     var attackingGroup = this.groups[this.currentGroupIndex];
     var groupToAttack = this.getGroupToAttack(attackingGroup);
     console.log('-----------------------');
-    self.rounds++;
+    this.rounds++;
     console.log(attackingGroup.id, 'attacks', groupToAttack.id);
-    var numberOfKillingCreatures = this.attackWillKillNumOfCreatures();
-    groupToAttack.attackedBy(attackingGroup, numberOfKillingCreatures);
-    attackingGroup.killCreatures(numberOfKillingCreatures);
+
+    this.attack(attackingGroup, groupToAttack, this.evaluateRound.bind(this));
+  },
+
+  /**
+   * Triggered after each round has ended
+   * @param {Object} attackingGroup
+   * @param {Object} groupToAttack
+   */
+  evaluateRound : function(attackingGroup, groupToAttack, winnerGroup) {
+    var self = this;
 
     // Lets check if the attacked group can stand another attack, if not add it to the 
     // dead groups
@@ -99,12 +111,53 @@ var Game = {
   },
 
   /**
-  * @return {Number}
-  */
-  attackWillKillNumOfCreatures : function() {
-    var creaturesToKill = getRandomInt(0, 1);
-    //TODO: non deterministic code
-    return creaturesToKill;
+   * Attacker attacks defender, either one of them loses creatures or none of them
+   * @param {Object} attacker
+   * @param {Object} defender
+   */
+  attack : function(attacker, defender, callback) {
+    var creaturesToKill = 0;
+    var self = this;
+    this.requestRandomTweet(function(attackerTweet, defenderTweet) {
+      var attackerTweetLen = attackerTweet.text.length;
+      var defenderTweetLen = defenderTweet.text.length;
+      var winnerGroup = null;
+
+      attacker.says(attackerTweet);
+      defender.says(defenderTweet);
+
+      if (attackerTweetLen > defenderTweetLen) {
+        defender.attackedBy(1);
+        winnerGroup = attacker;
+      } else if (attackerTweetLen < defenderTweetLen) {
+        attacker.attackedBy(1);
+        winnerGroup = defender;
+      }
+
+      var winnerName = winnerGroup ? winnerGroup.id + ' ATTACKS SUCCESSFULLY' : 'A DRAW';
+      self.roundState.html(winnerName);
+
+      callback(attacker, defender, winnerGroup);
+    });
+  },
+
+  /**
+   * Request node server to get twitter tweets :D
+   * @param {Function} callback
+   */
+  requestRandomTweet : function(callback) {
+    var tags = [getRandomArrayItem(['bier','barcelona', 'gaza'])];
+    jQuery.ajax({
+      type: "GET",
+      url: "/api",
+      data: { tags: tags }
+    }).done(function(response) {
+      if (typeof callback === 'function') {
+        // One random tweet for attacker, the other for the defender
+        callback(getRandomArrayItem(response.statuses),
+                 getRandomArrayItem(response.statuses));
+      }
+    });
   },
 
   /**
