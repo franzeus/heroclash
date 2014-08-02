@@ -5,3 +5,5 @@
 * npm start
 * Go to http://127.0.0.1:3000
 * Enjoy
+
+You will need my keys.json or use your own TwitterApi credentials
