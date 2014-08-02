@@ -1,5 +1,9 @@
 == README
 
+Round based game, where groups of magicians attack other magicians using random
+Live-Tweets as spells :D
+
+==== Instructions
 * Checkout repository
 * npm install
 * npm start
