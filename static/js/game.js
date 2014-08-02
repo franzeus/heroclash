@@ -31,8 +31,15 @@ var Game = {
     return this;
   },
 
-  start : function() {
+  reset : function() {
     this.deadGroups = [];
+    this.rounds = 0;
+    this.roundState.html('').addClass('hide');
+    return this;
+  },
+
+  start : function() {
+    this.reset();
     var numberOfGroups = this.groups.length;
     if (numberOfGroups <= 1) {
       throw 'Well it seems there will be no war today!';
@@ -47,14 +54,13 @@ var Game = {
 
   gameOver : function(winnerGroup) {
     winnerGroup.setWinner();
-    console.log("WINNER", winnerGroup.id, "Killed: " + winnerGroup.killedCreatures);
+    console.log("WINNER", winnerGroup.id);
     console.log("Rounds", this.rounds);
     this.roundState.html(winnerGroup.id + ' is the WINNER! (' + winnerGroup.totalMessageLen + ')');
   },
 
   render : function() {
     var groupWidth = (100 / this.groups.length) + '%';
-
     for (var i = 0; i < this.groups.length; i++) {
       this.groups[i].draw(groupWidth);
     }
@@ -121,6 +127,7 @@ var Game = {
   attack : function(attacker, defender, callback) {
     var creaturesToKill = 0;
     var self = this;
+    this.roundState.html('LOADING SPELLS ...');
     this.requestRandomTweet(function(attackerTweet, defenderTweet) {
       var attackerTweetLen = attackerTweet.text.length;
       var defenderTweetLen = defenderTweet.text.length;
