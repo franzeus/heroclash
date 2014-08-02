@@ -1,0 +1,9 @@
+{
+  "name": "hercoclash",
+  "version": "0.0.1",
+  "description": "Jop",
+  "dependencies": {
+    "express": "*"
+   },
+  "engine": "node >=0.6.x"
+}
