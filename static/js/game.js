@@ -8,13 +8,16 @@ var Game = {
   // @var {Number} rounds
   rounds: 0,
   // @const {Number} NEXT_ROUND_DELAY
-  NEXT_ROUND_DELAY: 100,
+  NEXT_ROUND_DELAY: 2000,
   // @var {Element}
   container: null,
   // @var {Element}
   roundState: null,
+  // @var {Array}
+  twitterTags: [],
 
-  init : function() {
+  init : function(twitterTags) {
+    this.twitterTags = twitterTags;
     this.container = jQuery('#gameContainer');
     this.roundState = jQuery('#round_state');
   },
@@ -122,6 +125,7 @@ var Game = {
       var attackerTweetLen = attackerTweet.text.length;
       var defenderTweetLen = defenderTweet.text.length;
       var winnerGroup = null;
+      var action = ' ATTACKS SUCCESSFULLY';
 
       attacker.says(attackerTweet);
       defender.says(defenderTweet);
@@ -132,9 +136,10 @@ var Game = {
       } else if (attackerTweetLen < defenderTweetLen) {
         attacker.attackedBy(1);
         winnerGroup = defender;
+        action = ' DEFENDS SUCCESSFULLY';
       }
 
-      var winnerName = winnerGroup ? winnerGroup.id + ' ATTACKS SUCCESSFULLY' : 'A DRAW';
+      var winnerName = winnerGroup ? winnerGroup.id + action : 'A DRAW';
       self.roundState.html(winnerName);
 
       callback(attacker, defender, winnerGroup);
@@ -146,7 +151,7 @@ var Game = {
    * @param {Function} callback
    */
   requestRandomTweet : function(callback) {
-    var tags = [getRandomArrayItem(['bier','barcelona', 'gaza'])];
+    var tags = [getRandomArrayItem(this.twitterTags)];
     jQuery.ajax({
       type: "GET",
       url: "/api",

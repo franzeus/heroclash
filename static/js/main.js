@@ -1,5 +1,12 @@
 (function() {
-  Game.init();
+  var spellTags = [
+    'spell',
+    'bane',
+    'bier',
+    'fail',
+    'barcelona'
+  ];
+  Game.init(spellTags);
   // Add groups and its creatures
   var addGroups = function() {
     var groups = [
