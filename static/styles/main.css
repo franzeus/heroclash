@@ -3,7 +3,7 @@ body {
 }
 
 .template, .hide {
-  display: none;
+  display: none !important;
 }
 
 #gameContainer {
