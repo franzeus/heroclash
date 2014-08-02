@@ -43,17 +43,6 @@ body {
   width: 100px;
 }
 
-.creature {
-  display: inline-block;
-  margin: 1em;
-  width: 20px;
-  height: 20px;
-  border: 1px solid #CCCCCC;
-  color: #F5B78F;
-  border-radius: 40px;
-  text-align: center;
-}
-
 #round_state {
   position: absolute;
   left: 50%;
@@ -66,7 +55,46 @@ body {
   text-align: center;
 }
 
+.creature {
+  display: inline-block;
+  margin: 1em;
+}
+
+.creature_head {
+  margin-left: 1px;
+  width: 10px;
+  height: 10px;
+  border: 1px solid #CCCCCC;
+  color: #F5B78F;
+  border-radius: 40px;
+  text-align: center;
+}
+
+.creature_body {
+  margin-top: 3px;
+  width: 12px;
+  height: 20px;
+  border: 1px solid #CCCCCC;
+}
+
 .dead_creature {
+  -webkit-transform-origin: bottom center;
+  -webkit-animation: creatureDead 1s normal forwards;
+  -moz-transform-origin: bottom center;
+  -moz-animation: creatureDead 1s normal forwards;
+}
+
+@-webkit-keyframes creatureDead {
+  0%   { transform: rotateX(0deg); }
+  100% { transform: rotateX(-70deg); }
+}
+
+@-moz-keyframes creatureDead {
+  0%   { transform: rotateX(0deg); }
+  100% { transform: rotateX(-70deg); }
+}
+
+.dead_creature .creature_body, .dead_creature .creature_head {
   border: 1px solid #e74c3c;
 }
 

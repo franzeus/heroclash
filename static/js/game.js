@@ -92,7 +92,6 @@ var Game = {
     if (groupToAttack.isDead()) {
       this.addDeadGroup(groupToAttack);
     }
-    this.render();
 
     // All groups (expect one) are dead
     if (this.deadGroups.length === this.groups.length - 1) {
